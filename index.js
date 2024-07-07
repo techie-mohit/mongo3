@@ -6,7 +6,7 @@ const Chat = require("./models/chat.js");
 
 app.set("views", path.join(__dirname, "views"));
 app.set("views engine", "ejs");
-
+app.use(express.static(path.join(__dirname, "public")))
 
 main()
 .then((res)=>{
@@ -19,20 +19,14 @@ async function main() {
 }
 
 
-const chat1= new Chat({
-  from: "abhishek",
-  to: "saquib",
-  msg: "what are you doing",
-  created_at: new Date()
-});
-
-chat1.save()
-.then((res)=>{
-  console.log(res);
+app.get("/chat", async(req,res)=>{
+  let chats= await Chat.find();
+  res.render("index.ejs", {chats});
 })
-.catch((err)=> console.log(err));
 
-
+app.get("/", (req,res)=>{
+  res.send("root is working");
+})
 
 
 app.listen(8080, ()=>{
