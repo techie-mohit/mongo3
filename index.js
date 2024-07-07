@@ -18,10 +18,15 @@ async function main() {
   await mongoose.connect('mongodb://127.0.0.1:27017/whatsapp');
 }
 
-
+// INDEX ROUTE
 app.get("/chat", async(req,res)=>{
   let chats= await Chat.find();
   res.render("index.ejs", {chats});
+})
+
+// NEW CHAT ROUTE
+app.get("/chat/new", (req,res)=>{
+  res.render("new.ejs");
 })
 
 app.get("/", (req,res)=>{
