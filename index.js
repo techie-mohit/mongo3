@@ -3,11 +3,13 @@ const app= express();
 const path= require("path");
 const mongoose= require("mongoose");
 const Chat = require("./models/chat.js");
+const methodOverride= require("method-override");
 
 app.set("views", path.join(__dirname, "views"));
 app.set("views engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")))
 app.use(express.urlencoded({extended:true}));
+app.use(methodOverride("_method"));
 
 main()
 .then((res)=>{
@@ -46,6 +48,29 @@ app.post("/chat", (req,res)=>{
   .catch((err)=>{
     console.log(err);
   })
+  res.redirect("/chat");
+})
+
+// edit route
+app.get("/chat/:id/edit", async(req,res)=>{
+  let {id}=req.params;
+  let chat= await Chat.findById(id);
+  res.render("edit.ejs", {chat});
+})
+
+//Update route
+app.put("/chat/:id", async(req,res)=>{
+  let {id}= req.params;
+  let {msg: newMsg}=req.body;
+  let updatedchat= await Chat.findByIdAndUpdate(id, {msg: newMsg}, {runValidators: true, new : true});
+  res.redirect("/chat");
+})
+
+// delete route
+app.delete("/chat/:id", async(req, res)=>{
+  let {id}= req.params;
+  let deletedChat=await Chat.findByIdAndDelete(id);
+  console.log(deletedChat);
   res.redirect("/chat");
 })
 
