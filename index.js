@@ -7,6 +7,7 @@ const Chat = require("./models/chat.js");
 app.set("views", path.join(__dirname, "views"));
 app.set("views engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")))
+app.use(express.urlencoded({extended:true}));
 
 main()
 .then((res)=>{
@@ -27,6 +28,25 @@ app.get("/chat", async(req,res)=>{
 // NEW CHAT ROUTE
 app.get("/chat/new", (req,res)=>{
   res.render("new.ejs");
+})
+
+// create Route
+app.post("/chat", (req,res)=>{
+  let {from, to, msg}= req.body;
+  let newchat= new Chat({
+    from: from,
+    to: to,
+    msg:msg,
+    created_at: new Date(),
+  });
+  newchat.save()
+  .then((res)=>{
+    console.log("chat was saved");
+  })
+  .catch((err)=>{
+    console.log(err);
+  })
+  res.redirect("/chat");
 })
 
 app.get("/", (req,res)=>{
